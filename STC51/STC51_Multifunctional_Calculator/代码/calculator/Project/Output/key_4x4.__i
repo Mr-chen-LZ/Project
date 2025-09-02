@@ -1,0 +1,1 @@
+"..\Source\key_4x4.c" LARGE OPTIMIZE (8,SPEED) BROWSE INCDIR(..\Source;..\User) DEBUG OBJECTEXTEND PRINT(.\List\key_4x4.lst) TABS (2) OBJECT(.\Output\key_4x4.obj)

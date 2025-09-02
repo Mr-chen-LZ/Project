@@ -1,0 +1,40 @@
+Dependencies for Project 'G', Target 'G': (DO NOT MODIFY !)
+CompilerVersion: 5060750::V5.06 update 6 (build 750)::ARMCC
+F (startup_stm32f103xb.s)(0x6895B653)(--cpu Cortex-M3 -g --apcs=interwork -I.\RTE\_G-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.2.0\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include--pd "__UVISION_VERSION SETA 527" --pd "_RTE_ SETA 1" --pd "STM32F10X_MD SETA 1"--list startup_stm32f103xb.lst --xref -o g\startup_stm32f103xb.o --depend g\startup_stm32f103xb.d)
+F (../Core/Src/main.c)(0x6896A37B)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../HARDWARE/BT04A -I ../HARDWARE/dht11 -I ../HARDWARE/oled -I ../HARDWARE/ULN2003 -I ../HARDWARE/SG90-I.\RTE\_G-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.2.0\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="527" -D_RTE_ -DSTM32F10X_MD -DUSE_HAL_DRIVER -DSTM32F103xB-o g\main.o --omf_browse g\main.crf --depend g\main.d)
+I (../Core/Inc/main.h)(0x68833658)
+I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h)(0x688D957A)
+I (../Core/Inc/stm32f1xx_hal_conf.h)(0x688B3C21)
+I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h)(0x688D957A)
+I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h)(0x688D957A)
+I (../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h)(0x688D9573)
+I (../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h)(0x688D9573)
+I (../Drivers/CMSIS/Include/core_cm3.h)(0x688D957A)
+F (../Core/Src/gpio.c)(0x68898D3E)()
+F (../Core/Src/adc.c)(0x688B4538)()
+F (../Core/Src/tim.c)(0x6896A592)()
+F (../Core/Src/usart.c)(0x68833657)()
+F (../Core/Src/stm32f1xx_it.c)(0x6889B5CC)()
+F (../Core/Src/stm32f1xx_hal_msp.c)(0x68833658)()
+F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio_ex.c)(0x688D957A)()
+F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_adc.c)(0x688D957A)()
+F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_adc_ex.c)(0x688D957A)()
+F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal.c)(0x688D957A)()
+F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc.c)(0x688D957A)()
+F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c)(0x688D957A)()
+F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio.c)(0x688D957A)()
+F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_dma.c)(0x688D957A)()
+F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_cortex.c)(0x688D957A)()
+F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_pwr.c)(0x688D957A)()
+F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash.c)(0x688D957A)()
+F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash_ex.c)(0x688D957A)()
+F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_exti.c)(0x688D957A)()
+F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim.c)(0x688D957A)()
+F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim_ex.c)(0x688D957A)()
+F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_uart.c)(0x688D957A)()
+F (../Core/Src/system_stm32f1xx.c)(0x6874FFA4)()
+F (..\HARDWARE\BT04A\bt04a.c)(0x6896AD67)()
+F (..\HARDWARE\dht11\dht11.c)(0x6884444B)()
+F (..\HARDWARE\oled\oled.c)(0x6895B838)()
+F (..\HARDWARE\ULN2003\uln2003.c)(0x688984B0)()
+F (..\HARDWARE\SG90\SG90.c)(0x688B43E6)()

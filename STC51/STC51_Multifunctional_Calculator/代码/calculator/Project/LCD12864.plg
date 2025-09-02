@@ -1,0 +1,351 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Project:</h2>
+E:\stc15_test_temp\2 - 传感器实验程序\实验3-3-1：LCD12864液晶屏显示实验（并口方式）\LCD12864\Project\LCD12864.uvproj
+Project File Date:  08/31/2019
+
+<h2>Output:</h2>
+Build target 'IK-STC15'
+compiling main.c...
+..\User\main.c(59): warning C206: 'DisplayOneChar': missing function-prototype
+..\User\main.c(59): error C267: 'DisplayOneChar': requires ANSI-style prototype
+compiling delay.c...
+compiling lcd12864.c...
+Target not created
+Build target 'IK-STC15'
+compiling main.c...
+..\User\main.c(59): error C214: illegal pointer conversion
+Target not created
+Build target 'IK-STC15'
+compiling main.c...
+..\User\main.c(38): warning C280: 'strTemp': unreferenced local variable
+..\User\main.c(38): warning C280: 'uTemp': unreferenced local variable
+..\User\main.c(38): warning C280: 'Sign': unreferenced local variable
+linking...
+Program Size: data=9.0 xdata=22 code=599
+creating hex file from ".\Output\LCD12864"...
+".\Output\LCD12864" - 0 Error(s), 3 Warning(s).
+Build target 'IK-STC15'
+compiling main.c...
+linking...
+Program Size: data=9.0 xdata=10 code=587
+creating hex file from ".\Output\LCD12864"...
+".\Output\LCD12864" - 0 Error(s), 0 Warning(s).
+Rebuild target 'IK-STC15'
+compiling main.c...
+compiling delay.c...
+compiling lcd12864.c...
+linking...
+Program Size: data=9.0 xdata=10 code=587
+creating hex file from ".\Output\LCD12864"...
+".\Output\LCD12864" - 0 Error(s), 0 Warning(s).
+Build target 'IK-STC15'
+compiling main.c...
+compiling delay.c...
+compiling lcd12864.c...
+..\Source\lcd12864.c(199): warning C206: 'ReadDat': missing function-prototype
+..\Source\lcd12864.c(246): error C202: 'PARM_ERR': undefined identifier
+..\Source\lcd12864.c(247): error C202: 'PARM_ERR': undefined identifier
+..\Source\lcd12864.c(261): error C202: 'SUCESS': undefined identifier
+..\Source\lcd12864.c(277): error C202: 'PARM_ERR': undefined identifier
+..\Source\lcd12864.c(278): error C202: 'PARM_ERR': undefined identifier
+..\Source\lcd12864.c(290): error C202: 'SUCESS': undefined identifier
+..\Source\lcd12864.c(316): error C202: 'SUCESS': undefined identifier
+..\Source\lcd12864.c(325): error C202: 'SUCESS': undefined identifier
+Target not created
+Build target 'IK-STC15'
+compiling main.c...
+compiling lcd12864.c...
+..\Source\lcd12864.c(199): warning C206: 'ReadDat': missing function-prototype
+..\Source\lcd12864.c(330): warning C206: 'abs': missing function-prototype
+..\Source\lcd12864.c(330): error C267: 'abs': requires ANSI-style prototype
+Target not created
+Build target 'IK-STC15'
+compiling main.c...
+..\Source\lcd12864.h(5): warning C318: can't open file 'stdint.h'
+compiling lcd12864.c...
+..\Source\lcd12864.h(5): warning C318: can't open file 'stdint.h'
+..\Source\lcd12864.c(199): warning C206: 'ReadDat': missing function-prototype
+..\Source\lcd12864.c(330): warning C206: 'abs': missing function-prototype
+..\Source\lcd12864.c(330): error C267: 'abs': requires ANSI-style prototype
+Target not created
+Build target 'IK-STC15'
+compiling main.c...
+compiling lcd12864.c...
+..\Source\lcd12864.c(199): warning C206: 'ReadDat': missing function-prototype
+linking...
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  _DISP
+    MODULE:  .\Output\main.obj (MAIN)
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  ?_DISP?BYTE
+    MODULE:  .\Output\main.obj (MAIN)
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  INI_LCD
+    MODULE:  .\Output\main.obj (MAIN)
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  INI_LCD
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 0333H
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DISP?BYTE
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 0336H
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _DISP
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 034AH
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DISP?BYTE
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 034DH
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _DISP
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 0361H
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DISP?BYTE
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 0364H
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _DISP
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 0378H
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DISP?BYTE
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 037BH
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _DISP
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 038FH
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  READDAT
+    MODULE:  .\Output\lcd12864.obj (LCD12864)
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  READDAT
+    MODULE:  .\Output\lcd12864.obj (LCD12864)
+    ADDRESS: 021DH
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  READDAT
+    MODULE:  .\Output\lcd12864.obj (LCD12864)
+    ADDRESS: 0220H
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  READDAT
+    MODULE:  .\Output\lcd12864.obj (LCD12864)
+    ADDRESS: 0228H
+Program Size: data=9.0 xdata=55 code=1848
+creating hex file from ".\Output\LCD12864"...
+".\Output\LCD12864" - 0 Error(s), 17 Warning(s).
+Rebuild target 'IK-STC15'
+compiling main.c...
+compiling delay.c...
+compiling lcd12864.c...
+..\Source\lcd12864.c(199): warning C206: 'ReadDat': missing function-prototype
+linking...
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  _DISP
+    MODULE:  .\Output\main.obj (MAIN)
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  ?_DISP?BYTE
+    MODULE:  .\Output\main.obj (MAIN)
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  INI_LCD
+    MODULE:  .\Output\main.obj (MAIN)
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  INI_LCD
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 0333H
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DISP?BYTE
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 0336H
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _DISP
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 034AH
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DISP?BYTE
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 034DH
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _DISP
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 0361H
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DISP?BYTE
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 0364H
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _DISP
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 0378H
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DISP?BYTE
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 037BH
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _DISP
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 038FH
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  READDAT
+    MODULE:  .\Output\lcd12864.obj (LCD12864)
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  READDAT
+    MODULE:  .\Output\lcd12864.obj (LCD12864)
+    ADDRESS: 021DH
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  READDAT
+    MODULE:  .\Output\lcd12864.obj (LCD12864)
+    ADDRESS: 0220H
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  READDAT
+    MODULE:  .\Output\lcd12864.obj (LCD12864)
+    ADDRESS: 0228H
+Program Size: data=9.0 xdata=55 code=1848
+creating hex file from ".\Output\LCD12864"...
+".\Output\LCD12864" - 0 Error(s), 17 Warning(s).
+Build target 'IK-STC15'
+compiling main.c...
+..\Source\lcd12864.h(6): warning C318: can't open file 'stdint.h'
+compiling lcd12864.c...
+..\Source\lcd12864.h(6): warning C318: can't open file 'stdint.h'
+..\Source\lcd12864.c(199): warning C206: 'ReadDat': missing function-prototype
+linking...
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  _DISP
+    MODULE:  .\Output\main.obj (MAIN)
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  ?_DISP?BYTE
+    MODULE:  .\Output\main.obj (MAIN)
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  INI_LCD
+    MODULE:  .\Output\main.obj (MAIN)
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  INI_LCD
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 0333H
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DISP?BYTE
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 0336H
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _DISP
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 034AH
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DISP?BYTE
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 034DH
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _DISP
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 0361H
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DISP?BYTE
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 0364H
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _DISP
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 0378H
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DISP?BYTE
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 037BH
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _DISP
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 038FH
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  READDAT
+    MODULE:  .\Output\lcd12864.obj (LCD12864)
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  READDAT
+    MODULE:  .\Output\lcd12864.obj (LCD12864)
+    ADDRESS: 021DH
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  READDAT
+    MODULE:  .\Output\lcd12864.obj (LCD12864)
+    ADDRESS: 0220H
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  READDAT
+    MODULE:  .\Output\lcd12864.obj (LCD12864)
+    ADDRESS: 0228H
+Program Size: data=9.0 xdata=55 code=1848
+creating hex file from ".\Output\LCD12864"...
+".\Output\LCD12864" - 0 Error(s), 19 Warning(s).
+Rebuild target 'IK-STC15'
+compiling main.c...
+..\Source\lcd12864.h(6): warning C318: can't open file 'stdint.h'
+compiling delay.c...
+compiling lcd12864.c...
+..\Source\lcd12864.h(6): warning C318: can't open file 'stdint.h'
+..\Source\lcd12864.c(199): warning C206: 'ReadDat': missing function-prototype
+linking...
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  _DISP
+    MODULE:  .\Output\main.obj (MAIN)
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  ?_DISP?BYTE
+    MODULE:  .\Output\main.obj (MAIN)
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  INI_LCD
+    MODULE:  .\Output\main.obj (MAIN)
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  INI_LCD
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 0333H
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DISP?BYTE
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 0336H
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _DISP
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 034AH
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DISP?BYTE
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 034DH
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _DISP
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 0361H
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DISP?BYTE
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 0364H
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _DISP
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 0378H
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DISP?BYTE
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 037BH
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _DISP
+    MODULE:  .\Output\main.obj (MAIN)
+    ADDRESS: 038FH
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  READDAT
+    MODULE:  .\Output\lcd12864.obj (LCD12864)
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  READDAT
+    MODULE:  .\Output\lcd12864.obj (LCD12864)
+    ADDRESS: 021DH
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  READDAT
+    MODULE:  .\Output\lcd12864.obj (LCD12864)
+    ADDRESS: 0220H
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  READDAT
+    MODULE:  .\Output\lcd12864.obj (LCD12864)
+    ADDRESS: 0228H
+Program Size: data=9.0 xdata=55 code=1848
+creating hex file from ".\Output\LCD12864"...
+".\Output\LCD12864" - 0 Error(s), 19 Warning(s).

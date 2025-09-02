@@ -1,0 +1,745 @@
+C51 COMPILER V9.60.7.0   MAIN                                                              09/01/2025 10:46:03 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Output\main.obj
+COMPILER INVOKED BY: C:\Users\Mr.chen\AppData\Local\Keil_v51\C51\BIN\C51.EXE ..\User\main.c LARGE OPTIMIZE(8,SPEED) BROW
+                    -SE INCDIR(..\Source;..\User) DEBUG OBJECTEXTEND PRINT(.\List\main.lst) TABS(2) OBJECT(.\Output\main.obj)
+
+line level    source
+
+   1          #include "delay.h"
+   2          #include "lcd12864.h"
+   3          #include "key_4x4.h"
+   4          #include "timer.h"
+   5          #include "stdio.h"
+   6          #include "stdlib.h"
+   7          #include "string.h"
+   8          #include <math.h>
+   9          
+  10          
+  11          // 按键值映射宏
+  12          #define KEY_1       1
+  13          #define KEY_2       2
+  14          #define KEY_3       3
+  15          #define KEY_4       4
+  16          #define KEY_5       5
+  17          #define KEY_6       6
+  18          #define KEY_7       7
+  19          #define KEY_8       8
+  20          #define KEY_9       9
+  21          #define KEY_0       10
+  22          #define KEY_PLUS    11    // +
+  23          #define KEY_MINUS   12    // -
+  24          #define KEY_MULTI   13    // *
+  25          #define KEY_EQUAL   14    // =
+  26          #define KEY_AC      15    // AC
+  27          #define KEY_DIV     16    // ÷
+  28          
+  29          // 特殊按键值
+  30          #define KEY_BACKSPACE 0xAA  // 退格
+  31          
+  32          // 扩展运算符类型
+  33          #define OP_POWER        17  // 幂运算
+  34          #define OP_PERCENT      18  // 取余运算
+  35          #define OP_SQRT         19  // 开方运算
+  36          #define OP_RECIPROCAL   20  // 倒数运算
+  37          
+  38          // 运算状态宏
+  39          #define OP_STD_PLUS     0
+  40          #define OP_ALT_PLUS     1
+  41          #define OP_STD_MINUS    0
+  42          #define OP_ALT_MINUS    1
+  43          #define OP_STD_MULTI    0
+  44          #define OP_ALT_MULTI    1
+  45          #define OP_STD_DIV      0
+  46          #define OP_ALT_DIV      1
+  47          
+  48          // 长按阈值（毫秒）
+  49          #define LONG_PRESS_THRESHOLD 500
+  50          
+  51          // 最大输入长度
+  52          #define MAX_INPUT_LENGTH 15
+  53          #define MAX_DISPLAY_LENGTH 8
+  54          
+C51 COMPILER V9.60.7.0   MAIN                                                              09/01/2025 10:46:03 PAGE 2   
+
+  55          // 计算器状态
+  56          typedef enum {
+  57              STATE_INPUT_FIRST,
+  58              STATE_OPERATOR,
+  59              STATE_INPUT_SECOND,
+  60              STATE_RESULT,
+  61              STATE_ERROR
+  62          } calc_state_t;
+  63          
+  64          // 全局变量
+  65          calc_state_t calc_state = STATE_INPUT_FIRST;
+  66          uint8 plus_state = OP_STD_PLUS;
+  67          uint8 minus_state = OP_STD_MINUS;
+  68          uint8 multi_state = OP_STD_MULTI;
+  69          uint8 div_state = OP_STD_DIV;
+  70          
+  71          uint8 is_long_press = 0;  // 长按标志
+  72          
+  73          char display_line1[9] = {0};  // 第一行：第一个数 + 运算符
+  74          char display_line2[9] = {0};  // 第二行：第二个数或当前输入
+  75          char display_line3[9] = {0};  // 第三行：结果
+  76          
+  77          char input_buffer[16] = {0};
+  78          uint8 buffer_index = 0;
+  79          
+  80          char num2_display[9] = {0};  // 用于保存第二个数的显示
+  81          
+  82          double num1 = 0, num2 = 0, result = 0;
+  83          uint8 current_operator = 0;
+  84          uint8 is_negative = 0;
+  85          uint8 has_decimal = 0;
+  86          uint8 decimal_places = 0;
+  87          uint8 error_flag = 0;
+  88          
+  89          // 函数声明
+  90          void clear_all(void);
+  91          void process_key(uint8 key_val);
+  92          void update_display(void);
+  93          void display_error(const char* message);
+  94          void add_char_to_buffer(char c);
+  95          void backspace(void);
+  96          void calculate_result(void);
+  97          void reset_operator_states(void);
+  98          double get_current_number(void);
+  99          void format_number_for_display(double value, char* buffer, uint8 max_len);
+ 100          void handle_operator(uint8 op_key);
+ 101          void toggle_operator_state(uint8 op_key);
+ 102          uint8 check_overflow(double value);
+ 103          void process_digit_key(uint8 key_val);
+ 104          void process_equal_key(uint32 press_duration);
+ 105          void handle_single_operand_operator(uint8 op_key);
+ 106          void handle_double_operand_operator(uint8 op_key);
+ 107          
+ 108          // 主函数
+ 109          void main(void)
+ 110          {
+ 111   1          uint8 key_val;
+ 112   1          static uint32 equal_press_time = 0;
+ 113   1          static uint8 equal_pressed = 0;
+ 114   1          uint32 press_duration = 0;
+ 115   1          
+ 116   1          // 端口初始化
+C51 COMPILER V9.60.7.0   MAIN                                                              09/01/2025 10:46:03 PAGE 3   
+
+ 117   1          P0M1 = 0x00; P0M0 = 0x00;
+ 118   1          P2M1 &= 0xE5; P2M0 &= 0xE5;
+ 119   1          P2M1 &= 0x3F; P2M0 &= 0x3F;
+ 120   1          P4M1 &= 0x0F; P4M0 &= 0x0F;
+ 121   1          P5M1 &= 0xF3; P5M0 &= 0xF3;
+ 122   1          
+ 123   1          Timer0_Init();
+ 124   1          LCD_Init();
+ 125   1          clear_all();
+ 126   1          
+ 127   1          while(1)
+ 128   1          {
+ 129   2              key_val = KeyScan();
+ 130   2              
+ 131   2              if(key_val != 0)
+ 132   2              {
+ 133   3                  delay_ms(20);
+ 134   3                  if(KeyScan() == key_val)
+ 135   3                  {
+ 136   4                      if (key_val == KEY_EQUAL)
+ 137   4                      {
+ 138   5                          // 开始计时等号键按下
+ 139   5                          equal_pressed = 1;
+ 140   5                          equal_press_time = GetSysTick();
+ 141   5                      }
+ 142   4                      else
+ 143   4                      {
+ 144   5                          process_key(key_val);
+ 145   5                      }
+ 146   4                      while(KeyScan() != 0); // 等待按键释放
+ 147   4                      
+ 148   4                      // 等号键释放后的处理
+ 149   4                      if (equal_pressed)
+ 150   4                      {
+ 151   5                          equal_pressed = 0;
+ 152   5                          press_duration = GetSysTick() - equal_press_time;
+ 153   5                          process_equal_key(press_duration);
+ 154   5                      }
+ 155   4                  }
+ 156   3              }
+ 157   2          }
+ 158   1      }
+ 159          
+ 160          // 处理等号键
+ 161          void process_equal_key(uint32 press_duration)
+ 162          {
+ 163   1          if (press_duration >= LONG_PRESS_THRESHOLD)
+ 164   1          {
+ 165   2              process_key(KEY_EQUAL);  // 长按：计算
+ 166   2          }
+ 167   1          else
+ 168   1          {
+ 169   2              process_key(KEY_BACKSPACE);  // 短按：退格
+ 170   2          }
+ 171   1      }
+ 172          
+ 173          // 清除所有状态
+ 174          void clear_all(void)
+ 175          {
+ 176   1          buffer_index = 0;
+ 177   1          num1 = 0;
+ 178   1          num2 = 0;
+C51 COMPILER V9.60.7.0   MAIN                                                              09/01/2025 10:46:03 PAGE 4   
+
+ 179   1          result = 0;
+ 180   1          current_operator = 0;
+ 181   1          is_negative = 0;
+ 182   1          has_decimal = 0;
+ 183   1          decimal_places = 0;
+ 184   1          error_flag = 0;
+ 185   1          calc_state = STATE_INPUT_FIRST;
+ 186   1          
+ 187   1          reset_operator_states();
+ 188   1          memset(input_buffer, 0, sizeof(input_buffer));
+ 189   1          memset(display_line1, 0, sizeof(display_line1));
+ 190   1          memset(display_line2, 0, sizeof(display_line2));
+ 191   1          memset(display_line3, 0, sizeof(display_line3));
+ 192   1          memset(num2_display, 0, sizeof(num2_display));
+ 193   1          
+ 194   1          // 清空显示
+ 195   1          Fill_GDRAM(0);
+ 196   1          LCD_ShowString(1, 0, MAX_DISPLAY_LENGTH, "        ");
+ 197   1          LCD_ShowString(2, 0, MAX_DISPLAY_LENGTH, "        ");
+ 198   1          LCD_ShowString(3, 0, MAX_DISPLAY_LENGTH, "        ");
+ 199   1      }
+ 200          // 重置运算符状态
+ 201          void reset_operator_states(void)
+ 202          {
+ 203   1          plus_state = OP_STD_PLUS;
+ 204   1          minus_state = OP_STD_MINUS;
+ 205   1          multi_state = OP_STD_MULTI;
+ 206   1          div_state = OP_STD_DIV;
+ 207   1      }
+ 208          
+ 209          // 获取当前缓冲区中的数字
+ 210          double get_current_number(void)
+ 211          {
+ 212   1          char temp_buffer[16];
+ 213   1          if (buffer_index == 0) return 0.0;
+ 214   1          
+ 215   1          if (is_negative) {
+ 216   2              sprintf(temp_buffer, "-%s", input_buffer);
+ 217   2          } else {
+ 218   2              strcpy(temp_buffer, input_buffer);
+ 219   2          }
+ 220   1          
+ 221   1          return atof(temp_buffer);
+ 222   1      }
+ 223          
+ 224          void format_number_for_display(double value, char* buffer, uint8 max_len)
+ 225          {
+ 226   1          char temp_buffer[32];  // 使用足够大的临时缓冲区
+ 227   1          char *dot;
+ 228   1          char *p;
+ 229   1          
+ 230   1          // 初始化缓冲区
+ 231   1          buffer[0] = '\0';
+ 232   1          
+ 233   1          // 检查是否为特殊值
+ 234   1          if (value != value) {
+ 235   2              strncpy(buffer, "NaN", max_len);
+ 236   2              buffer[max_len-1] = '\0';
+ 237   2              return;
+ 238   2          }
+ 239   1          
+ 240   1          // 检查无穷大
+C51 COMPILER V9.60.7.0   MAIN                                                              09/01/2025 10:46:03 PAGE 5   
+
+ 241   1          if (value > 1e308 || value < -1e308) {
+ 242   2              if (value > 0) {
+ 243   3                  strncpy(buffer, "Inf", max_len);
+ 244   3              } else {
+ 245   3                  strncpy(buffer, "-Inf", max_len);
+ 246   3              }
+ 247   2              buffer[max_len-1] = '\0';
+ 248   2              return;
+ 249   2          }
+ 250   1          
+ 251   1          // 处理很大或很小的数字使用科学计数法
+ 252   1          if (value > 99999999.9999 || (value < 0.0001 && value > 1e-9 && value != 0)) {
+ 253   2              sprintf(temp_buffer, "%.2e", value);
+ 254   2          } 
+ 255   1          // 处理整数
+ 256   1          else if (fabs(value - (int)value) < 1e-9) {
+ 257   2              sprintf(temp_buffer, "%d", (int)value);
+ 258   2          } 
+ 259   1          // 处理小数
+ 260   1          else {
+ 261   2              sprintf(temp_buffer, "%.6f", value);
+ 262   2              // 去除末尾的0
+ 263   2              dot = strchr(temp_buffer, '.');
+ 264   2              if (dot != NULL) {
+ 265   3                  p = temp_buffer + strlen(temp_buffer) - 1;
+ 266   3                  while (p > dot && *p == '0') {
+ 267   4                      *p = '\0';
+ 268   4                      p--;
+ 269   4                  }
+ 270   3                  if (p == dot) {
+ 271   4                      *p = '\0';
+ 272   4                  }
+ 273   3              }
+ 274   2          }
+ 275   1          
+ 276   1          // 安全地复制到目标缓冲区，确保不超过最大长度
+ 277   1          strncpy(buffer, temp_buffer, max_len);
+ 278   1          buffer[max_len-1] = '\0';  // 确保以null结尾
+ 279   1      }
+ 280          
+ 281          
+ 282          // 添加字符到缓冲区
+ 283          void add_char_to_buffer(char c)
+ 284          {
+ 285   1          if (buffer_index >= MAX_INPUT_LENGTH) return;
+ 286   1          
+ 287   1          // 处理小数点
+ 288   1          if (c == '.') {
+ 289   2              if (has_decimal) return;  // 已经有一个小数点了
+ 290   2              if (buffer_index == 0) {
+ 291   3                  // 第一个字符是小数点，自动补0
+ 292   3                  input_buffer[buffer_index++] = '0';
+ 293   3              }
+ 294   2              has_decimal = 1;
+ 295   2              input_buffer[buffer_index++] = c;
+ 296   2          }
+ 297   1          // 处理数字
+ 298   1          else if (c >= '0' && c <= '9') {
+ 299   2              if (has_decimal) {
+ 300   3                  decimal_places++;
+ 301   3                  if (decimal_places > 6) return;  // 最多6位小数
+ 302   3              }
+C51 COMPILER V9.60.7.0   MAIN                                                              09/01/2025 10:46:03 PAGE 6   
+
+ 303   2              input_buffer[buffer_index++] = c;
+ 304   2          }
+ 305   1          
+ 306   1          input_buffer[buffer_index] = '\0';
+ 307   1      }
+ 308          
+ 309          // 退格处理
+ 310          void backspace(void)
+ 311          {
+ 312   1          if (buffer_index > 0) {
+ 313   2              if (input_buffer[buffer_index-1] == '.') {
+ 314   3                  has_decimal = 0;
+ 315   3              }
+ 316   2              buffer_index--;
+ 317   2              input_buffer[buffer_index] = '\0';
+ 318   2              
+ 319   2              // 重新计算小数位数
+ 320   2              if (has_decimal) {
+ 321   3                  char *dot = strchr(input_buffer, '.');
+ 322   3                  if (dot) {
+ 323   4                      decimal_places = strlen(dot + 1);
+ 324   4                  } else {
+ 325   4                      has_decimal = 0;
+ 326   4                      decimal_places = 0;
+ 327   4                  }
+ 328   3              }
+ 329   2          } else if (is_negative) {
+ 330   2              is_negative = 0;
+ 331   2          }
+ 332   1      }
+ 333          
+ 334          // 溢出检查函数
+ 335          uint8 check_overflow(double value)
+ 336          {
+ 337   1          if (value != value) return 1;  // NaN
+ 338   1          
+ 339   1          // 兼容性方法检查无穷大
+ 340   1          if (value > 1e308 || value < -1e308) return 1;  // 近似无穷大检查
+ 341   1          
+ 342   1          if (fabs(value) > 1e15) return 1;  // 溢出
+ 343   1          return 0;
+ 344   1      }
+ 345          
+ 346          // 处理数字键
+ 347          void process_digit_key(uint8 key_val)
+ 348          {
+ 349   1          char digit_char;
+ 350   1          
+ 351   1          // 确定数字字符
+ 352   1          if (key_val == KEY_0) {
+ 353   2              digit_char = '0';
+ 354   2          } else {
+ 355   2              digit_char = '0' + (key_val - KEY_1 + 1);
+ 356   2          }
+ 357   1          
+ 358   1          // 状态处理
+ 359   1          if (calc_state == STATE_RESULT || calc_state == STATE_ERROR) {
+ 360   2              clear_all();
+ 361   2              calc_state = STATE_INPUT_FIRST;
+ 362   2          } else if (calc_state == STATE_OPERATOR) {
+ 363   2              clear_all();
+ 364   2              calc_state = STATE_INPUT_FIRST;
+C51 COMPILER V9.60.7.0   MAIN                                                              09/01/2025 10:46:03 PAGE 7   
+
+ 365   2          }
+ 366   1          
+ 367   1          // 添加数字到缓冲区
+ 368   1          add_char_to_buffer(digit_char);
+ 369   1      }
+ 370          
+ 371          // 处理单操作数运算符
+ 372          void handle_single_operand_operator(uint8 op_key)
+ 373          {
+ 374   1          num1 = get_current_number();
+ 375   1          format_number_for_display(num1, display_line1, sizeof(display_line1));
+ 376   1          
+ 377   1          switch (op_key) {
+ 378   2              case KEY_MINUS:
+ 379   2                  minus_state = OP_ALT_MINUS;
+ 380   2                  strcpy(display_line2, "r");
+ 381   2                  current_operator = OP_SQRT;
+ 382   2                  break;
+ 383   2              case KEY_MULTI:
+ 384   2                  multi_state = OP_ALT_MULTI;
+ 385   2                  strcpy(display_line2, "1/x");
+ 386   2                  current_operator = OP_RECIPROCAL;
+ 387   2                  break;
+ 388   2          }
+ 389   1          
+ 390   1          calc_state = STATE_OPERATOR;
+ 391   1      }
+ 392          
+ 393          // 处理双操作数运算符
+ 394          void handle_double_operand_operator(uint8 op_key)
+ 395          {
+ 396   1          num1 = get_current_number();
+ 397   1          format_number_for_display(num1, display_line1, sizeof(display_line1));
+ 398   1          
+ 399   1          switch (op_key) {
+ 400   2              case KEY_PLUS:
+ 401   2                  plus_state = !plus_state;
+ 402   2                  current_operator = (plus_state == OP_STD_PLUS) ? KEY_PLUS : OP_POWER;
+ 403   2                  strcpy(display_line2, (plus_state == OP_STD_PLUS) ? "+" : "^");
+ 404   2                  break;
+ 405   2              case KEY_MINUS:
+ 406   2                  minus_state = OP_STD_MINUS;
+ 407   2                  current_operator = KEY_MINUS;
+ 408   2                  strcpy(display_line2, "-");
+ 409   2                  break;
+ 410   2              case KEY_MULTI:
+ 411   2                  multi_state = OP_STD_MULTI;
+ 412   2                  current_operator = KEY_MULTI;
+ 413   2                  strcpy(display_line2, "*");
+ 414   2                  break;
+ 415   2              case KEY_DIV:
+ 416   2                  div_state = !div_state;
+ 417   2                  current_operator = (div_state == OP_STD_DIV) ? KEY_DIV : OP_PERCENT;
+ 418   2                  strcpy(display_line2, (div_state == OP_STD_DIV) ? "/" : "%");
+ 419   2                  break;
+ 420   2          }
+ 421   1          
+ 422   1          calc_state = STATE_INPUT_SECOND;
+ 423   1          
+ 424   1          // 清空输入缓冲区
+ 425   1          buffer_index = 0;
+ 426   1          is_negative = 0;
+C51 COMPILER V9.60.7.0   MAIN                                                              09/01/2025 10:46:03 PAGE 8   
+
+ 427   1          has_decimal = 0;
+ 428   1          memset(input_buffer, 0, sizeof(input_buffer));
+ 429   1          // 注意：这里不要清空 num2_display，让它保持之前的值
+ 430   1      }
+ 431          
+ 432          // 处理运算符
+ 433          void handle_operator(uint8 op_key)
+ 434          {
+ 435   1          if (calc_state == STATE_INPUT_FIRST && buffer_index > 0) {
+ 436   2              // 处理减号的特殊逻辑（负号或运算符）
+ 437   2              if (op_key == KEY_MINUS && buffer_index == 0 && !is_negative) {
+ 438   3                  is_negative = 1;
+ 439   3                  return;
+ 440   3              }
+ 441   2              
+ 442   2              // 区分单操作数和双操作数运算符
+ 443   2              if ((op_key == KEY_MINUS && minus_state == OP_ALT_MINUS) || 
+ 444   2                  (op_key == KEY_MULTI && multi_state == OP_ALT_MULTI)) {
+ 445   3                  handle_single_operand_operator(op_key);
+ 446   3              } else {
+ 447   3                  handle_double_operand_operator(op_key);
+ 448   3              }
+ 449   2          }
+ 450   1          else if (calc_state == STATE_OPERATOR || calc_state == STATE_INPUT_SECOND) {
+ 451   2              // 切换运算符状态
+ 452   2              switch (op_key) {
+ 453   3                  case KEY_PLUS:
+ 454   3                      plus_state = !plus_state;
+ 455   3                      current_operator = (plus_state == OP_STD_PLUS) ? KEY_PLUS : OP_POWER;
+ 456   3                      strcpy(display_line2, (plus_state == OP_STD_PLUS) ? "+" : "^");
+ 457   3                      calc_state = STATE_INPUT_SECOND;
+ 458   3                      break;
+ 459   3                  case KEY_MINUS:
+ 460   3                      minus_state = !minus_state;
+ 461   3                      if (minus_state == OP_ALT_MINUS) {
+ 462   4                          strcpy(display_line2, "r");
+ 463   4                          current_operator = OP_SQRT;
+ 464   4                          calc_state = STATE_OPERATOR;
+ 465   4                      } else {
+ 466   4                          strcpy(display_line2, "-");
+ 467   4                          current_operator = KEY_MINUS;
+ 468   4                          calc_state = STATE_INPUT_SECOND;
+ 469   4                      }
+ 470   3                      break;
+ 471   3                  case KEY_MULTI:
+ 472   3                      multi_state = !multi_state;
+ 473   3                      if (multi_state == OP_ALT_MULTI) {
+ 474   4                          strcpy(display_line2, "1/x");
+ 475   4                          current_operator = OP_RECIPROCAL;
+ 476   4                          calc_state = STATE_OPERATOR;
+ 477   4                      } else {
+ 478   4                          strcpy(display_line2, "*");
+ 479   4                          current_operator = KEY_MULTI;
+ 480   4                          calc_state = STATE_INPUT_SECOND;
+ 481   4                      }
+ 482   3                      break;
+ 483   3                  case KEY_DIV:
+ 484   3                      div_state = !div_state;
+ 485   3                      current_operator = (div_state == OP_STD_DIV) ? KEY_DIV : OP_PERCENT;
+ 486   3                      strcpy(display_line2, (div_state == OP_STD_DIV) ? "/" : "%");
+ 487   3                      calc_state = STATE_INPUT_SECOND;
+ 488   3                      break;
+C51 COMPILER V9.60.7.0   MAIN                                                              09/01/2025 10:46:03 PAGE 9   
+
+ 489   3              }
+ 490   2              
+ 491   2              if (calc_state == STATE_INPUT_SECOND) {
+ 492   3                  buffer_index = 0;
+ 493   3                  is_negative = 0;
+ 494   3                  has_decimal = 0;
+ 495   3                  memset(input_buffer, 0, sizeof(input_buffer));
+ 496   3              }
+ 497   2          }
+ 498   1      }
+ 499          
+ 500          // 更新显示
+ 501          void update_display(void)
+ 502          {
+ 503   1          char line1_buf[16] = {0};
+ 504   1          char temp_buf[16] = {0};
+ 505   1          
+ 506   1          // 清空显示区域
+ 507   1          LCD_ShowString(1, 0, MAX_DISPLAY_LENGTH, "        ");
+ 508   1          LCD_ShowString(2, 0, MAX_DISPLAY_LENGTH, "        ");
+ 509   1          LCD_ShowString(3, 0, MAX_DISPLAY_LENGTH, "        ");
+ 510   1          
+ 511   1          // 第一行：第一个数 + 运算符
+ 512   1          if (strlen(display_line1) > 0) {
+ 513   2              if (strlen(display_line2) > 0) {
+ 514   3                  sprintf(line1_buf, "%s%s", display_line1, display_line2);
+ 515   3              } else {
+ 516   3                  strcpy(line1_buf, display_line1);
+ 517   3              }
+ 518   2              if (strlen(line1_buf) > MAX_DISPLAY_LENGTH) {
+ 519   3                  line1_buf[MAX_DISPLAY_LENGTH] = '\0';
+ 520   3              }
+ 521   2              LCD_ShowString(1, 0, strlen(line1_buf), (uint8*)line1_buf);
+ 522   2          }
+ 523   1          
+ 524   1          // 第二行：当前输入的数字或第二个数
+ 525   1          if (calc_state == STATE_INPUT_FIRST || calc_state == STATE_INPUT_SECOND) {
+ 526   2              if (buffer_index > 0) {
+ 527   3                  if (is_negative) {
+ 528   4                      sprintf(temp_buf, "-%s", input_buffer);
+ 529   4                  } else {
+ 530   4                      strcpy(temp_buf, input_buffer);
+ 531   4                  }
+ 532   3              } else {
+ 533   3                  if (calc_state == STATE_INPUT_SECOND) {
+ 534   4                      strcpy(temp_buf, "0");
+ 535   4                  } else {
+ 536   4                      strcpy(temp_buf, "");
+ 537   4                  }
+ 538   3              }
+ 539   2              
+ 540   2              if (strlen(temp_buf) > MAX_DISPLAY_LENGTH) {
+ 541   3                  temp_buf[MAX_DISPLAY_LENGTH] = '\0';
+ 542   3              }
+ 543   2              LCD_ShowString(2, 0, strlen(temp_buf), (uint8*)temp_buf);
+ 544   2          }
+ 545   1          else if (calc_state == STATE_OPERATOR) {
+ 546   2              LCD_ShowString(2, 0, 8, "Press =");
+ 547   2          }
+ 548   1          else if (calc_state == STATE_RESULT || calc_state == STATE_ERROR) {
+ 549   2              // 结果显示时，第二行显示第二个数
+ 550   2              if (strlen(num2_display) > 0) {
+C51 COMPILER V9.60.7.0   MAIN                                                              09/01/2025 10:46:03 PAGE 10  
+
+ 551   3                  // 确保显示长度不超过限制
+ 552   3                  if (strlen(num2_display) > MAX_DISPLAY_LENGTH) {
+ 553   4                      char truncated[MAX_DISPLAY_LENGTH + 1];
+ 554   4                      strncpy(truncated, num2_display, MAX_DISPLAY_LENGTH);
+ 555   4                      truncated[MAX_DISPLAY_LENGTH] = '\0';
+ 556   4                      LCD_ShowString(2, 0, MAX_DISPLAY_LENGTH, (uint8*)truncated);
+ 557   4                  } else {
+ 558   4                      LCD_ShowString(2, 0, strlen(num2_display), (uint8*)num2_display);
+ 559   4                  }
+ 560   3              } else {
+ 561   3                  // 如果没有第二个数（单操作数运算），显示运算符描述
+ 562   3                  if (strlen(display_line2) > 0) {
+ 563   4                      LCD_ShowString(2, 0, strlen(display_line2), (uint8*)display_line2);
+ 564   4                  } else {
+ 565   4                      LCD_ShowString(2, 0, MAX_DISPLAY_LENGTH, "        ");
+ 566   4                  }
+ 567   3              }
+ 568   2          }
+ 569   1          
+ 570   1          // 第三行：结果或错误信息
+ 571   1          if (calc_state == STATE_RESULT || calc_state == STATE_ERROR) {
+ 572   2              LCD_ShowString(3, 0, strlen(display_line3), (uint8*)display_line3);
+ 573   2          } else {
+ 574   2              LCD_ShowString(3, 0, MAX_DISPLAY_LENGTH, "        ");
+ 575   2          }
+ 576   1      }
+ 577          
+ 578          
+ 579          // 处理按键输入
+ 580          void process_key(uint8 key_val)
+ 581          {
+ 582   1          if (error_flag && key_val != KEY_AC) return;
+ 583   1          
+ 584   1          switch(key_val)
+ 585   1          {
+ 586   2              case KEY_0: 
+ 587   2              case KEY_1: 
+ 588   2              case KEY_2: 
+ 589   2              case KEY_3: 
+ 590   2              case KEY_4: 
+ 591   2              case KEY_5: 
+ 592   2              case KEY_6: 
+ 593   2              case KEY_7: 
+ 594   2              case KEY_8: 
+ 595   2              case KEY_9: 
+ 596   2                  process_digit_key(key_val);
+ 597   2                  break;
+ 598   2                  
+ 599   2              case KEY_BACKSPACE:
+ 600   2                  backspace();
+ 601   2                  break;
+ 602   2                  
+ 603   2              case KEY_PLUS:
+ 604   2              case KEY_MINUS:
+ 605   2              case KEY_MULTI:
+ 606   2              case KEY_DIV:
+ 607   2                  handle_operator(key_val);
+ 608   2                  break;
+ 609   2                  
+ 610   2              case KEY_EQUAL:
+ 611   2                  if (calc_state == STATE_INPUT_SECOND || calc_state == STATE_OPERATOR) {
+ 612   3                      if (calc_state == STATE_INPUT_SECOND) {
+C51 COMPILER V9.60.7.0   MAIN                                                              09/01/2025 10:46:03 PAGE 11  
+
+ 613   4                          num2 = get_current_number();
+ 614   4                          // 在计算前保存第二个数的显示（使用原始输入）
+ 615   4                          if (buffer_index > 0) {
+ 616   5                              if (is_negative) {
+ 617   6                                  sprintf(num2_display, "-%s", input_buffer);
+ 618   6                              } else {
+ 619   6                                  strcpy(num2_display, input_buffer);
+ 620   6                              }
+ 621   5                          } else {
+ 622   5                              strcpy(num2_display, "0");
+ 623   5                          }
+ 624   4                      } else {
+ 625   4                          // 单操作数运算时，使用运算符描述作为第二个数显示
+ 626   4                          strcpy(num2_display, display_line2);
+ 627   4                      }
+ 628   3                      calculate_result();
+ 629   3                  }
+ 630   2                  break;
+ 631   2                  
+ 632   2              case KEY_AC:
+ 633   2                  clear_all();
+ 634   2                  break;
+ 635   2                  
+ 636   2              default:
+ 637   2                  break;
+ 638   2          }
+ 639   1          
+ 640   1          update_display();
+ 641   1      }
+ 642          
+ 643          
+ 644          // 显示错误信息
+ 645          void display_error(const char* message)
+ 646          {
+ 647   1          error_flag = 1;
+ 648   1          calc_state = STATE_ERROR;
+ 649   1          strncpy(display_line3, message, MAX_DISPLAY_LENGTH);
+ 650   1          display_line3[MAX_DISPLAY_LENGTH] = '\0';
+ 651   1      }
+ 652          
+ 653          // 计算结果
+ 654          void calculate_result(void)
+ 655          {    
+ 656   1          switch(current_operator)
+ 657   1          {
+ 658   2              case KEY_PLUS: result = num1 + num2; break;
+ 659   2              case KEY_MINUS: result = num1 - num2; break;
+ 660   2              case KEY_MULTI: result = num1 * num2; break;
+ 661   2              case KEY_DIV:
+ 662   2                  if (fabs(num2) < 1e-9) {
+ 663   3                      display_error("Div by 0");
+ 664   3                      return;
+ 665   3                  }
+ 666   2                  result = num1 / num2;
+ 667   2                  break;
+ 668   2              case OP_POWER: result = pow(num1, num2); break;
+ 669   2              case OP_PERCENT:
+ 670   2                  if (fabs(num2) < 1e-9) {
+ 671   3                      display_error("Mod by 0");
+ 672   3                      return;
+ 673   3                  }
+ 674   2                  result = fmod(num1, num2);
+C51 COMPILER V9.60.7.0   MAIN                                                              09/01/2025 10:46:03 PAGE 12  
+
+ 675   2                  break;
+ 676   2              case OP_SQRT:
+ 677   2                  if (num1 < 0) {
+ 678   3                      display_error("SQRT neg");
+ 679   3                      return;
+ 680   3                  }
+ 681   2                  result = sqrt(num1);
+ 682   2                  break;
+ 683   2              case OP_RECIPROCAL:
+ 684   2                  if (fabs(num1) < 1e-9) {
+ 685   3                      display_error("Div by 0");
+ 686   3                      return;
+ 687   3                  }
+ 688   2                  result = 1.0 / num1;
+ 689   2                  break;
+ 690   2          }
+ 691   1          
+ 692   1          if (check_overflow(result)) {
+ 693   2              display_error("Overflow");
+ 694   2              return;
+ 695   2          }
+ 696   1          
+ 697   1          calc_state = STATE_RESULT;
+ 698   1          format_number_for_display(result, display_line3, sizeof(display_line3));
+ 699   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   4051    ----
+   CONSTANT SIZE    =    141    ----
+   XDATA SIZE       =     81     127
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

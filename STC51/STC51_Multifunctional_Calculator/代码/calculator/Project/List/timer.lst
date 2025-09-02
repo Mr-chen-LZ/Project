@@ -1,0 +1,65 @@
+C51 COMPILER V9.60.7.0   TIMER                                                             08/29/2025 10:10:28 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE TIMER
+OBJECT MODULE PLACED IN .\Output\timer.obj
+COMPILER INVOKED BY: C:\Users\Mr.chen\AppData\Local\Keil_v51\C51\BIN\C51.EXE ..\Source\timer.c LARGE OPTIMIZE(8,SPEED) B
+                    -ROWSE INCDIR(..\Source;..\User) DEBUG OBJECTEXTEND PRINT(.\List\timer.lst) TABS(2) OBJECT(.\Output\timer.obj)
+
+line level    source
+
+   1          #include "timer.h"
+   2          
+   3          // 定义volatile全局计时变量
+   4          volatile uint32 sys_tick = 0;
+   5          
+   6          // 正确定义：12T模式下，11.0592MHz晶振，1ms定时所需的初值
+   7          // 计算公式：初值 = 65536 - (Fosc * 定时时间) / 12
+   8          // 计算过程：初值 = 65536 - (11059200 * 0.001) / 12 = 65536 - (11059.2 / 12) = 65536 - 921.6
+   9          // 我们取922个机器周期，因此初值 = 65536 - 922 = 64614
+  10          #define TIMER0_RELOAD_VALUE 64614UL
+  11          
+  12          void Timer0_Init(void)
+  13          {
+  14   1          AUXR &= 0x7F;   // 定时器0设置为12T模式 (最高位T0x12置0)，确保与传统8051兼容
+  15   1      
+  16   1          TMOD &= 0xF0;   // 清除T0的控制位
+  17   1          TMOD |= 0x01;   // 设置T0为模式1（16位定时器）
+  18   1      
+  19   1          // 装入初值
+  20   1          TH0 = (unsigned char)(TIMER0_RELOAD_VALUE / 256); // 高8位
+  21   1          TL0 = (unsigned char)(TIMER0_RELOAD_VALUE % 256); // 低8位
+  22   1      
+  23   1          ET0 = 1;        // 使能定时器0中断
+  24   1          EA = 1;         // 使能总中断
+  25   1          TR0 = 1;        // 启动定时器0
+  26   1      }
+  27          
+  28          void Timer0_ISR(void) interrupt 1
+  29          {
+  30   1          // 中断内重新装载初值
+  31   1          TH0 = (unsigned char)(TIMER0_RELOAD_VALUE / 256);
+  32   1          TL0 = (unsigned char)(TIMER0_RELOAD_VALUE % 256);
+  33   1      
+  34   1          sys_tick++;     // 系统时钟滴答+1
+  35   1      
+  36   1      }
+  37          
+  38          uint32 GetSysTick(void)
+  39          {
+  40   1          return sys_tick;
+  41   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    118    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =      4    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

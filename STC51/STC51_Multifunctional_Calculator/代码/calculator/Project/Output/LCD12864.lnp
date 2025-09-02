@@ -1,0 +1,8 @@
+".\Output\main.obj",
+".\Output\delay.obj",
+".\Output\lcd12864.obj",
+".\Output\key_4x4.obj",
+".\Output\timer.obj" 
+TO ".\Output\LCD12864" 
+PRINT(".\List\LCD12864.m51") RAMSIZE(256) 
+DISABLEWARNING (16) 
