@@ -1,0 +1,10 @@
+g\cjson.o: ..\NET\cjson\cJSON.c
+g\cjson.o: C:\Users\Mr.chen\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+g\cjson.o: C:\Users\Mr.chen\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+g\cjson.o: C:\Users\Mr.chen\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
+g\cjson.o: C:\Users\Mr.chen\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+g\cjson.o: C:\Users\Mr.chen\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\limits.h
+g\cjson.o: C:\Users\Mr.chen\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\ctype.h
+g\cjson.o: C:\Users\Mr.chen\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\float.h
+g\cjson.o: ..\NET\cjson\cJSON.h
+g\cjson.o: C:\Users\Mr.chen\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
